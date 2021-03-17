@@ -1,10 +1,10 @@
 import json
 import os
 import sys
-from pprint import pprint
 
-from main import send
-from utils import dict_to_mail
+import requests
+
+from utils import dict_to_mail,TRANSCODE,APIKEY
 import pika
 
 from utils import datetime_convertor
@@ -13,7 +13,21 @@ connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost', port=5672)
 )
 channel = connection.channel()
+def send(mail):
 
+    url = f'http://www.setrowsend.com/email/send.php?k={APIKEY}&transcode={TRANSCODE}'
+
+    data = [{
+        "gonderen_adi": "Türkiye Teknoloji Takımı",
+        "musterigonderimid": "ID123Q",
+        "adres": f"{mail.to}",
+        "alanlar": {"content": f"{mail.content}", "subject": f"{mail.title}"},
+        "dosya_ek": []
+    }]
+
+    response = requests.post(url, json=data)
+    if response.status_code == 200:
+        print('başarılı')
 
 def consumer():
     def callback(ch, method, properties, body: bytes):

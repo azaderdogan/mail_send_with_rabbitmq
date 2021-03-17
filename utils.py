@@ -51,3 +51,14 @@ def dict_to_mail(data: dict):
     mail.title = data['title']
     mail.to = data['to']
     return mail
+
+
+print(os.path.join(BASE_DIR))
+with open(os.path.join(BASE_DIR, 'api_key.txt')) as file:
+    APIKEY = file.readline().strip()
+
+with open(os.path.join(BASE_DIR, 'transcode.txt')) as file:
+    TRANSCODE = file.readline().strip()
+
+print(APIKEY)
+print(TRANSCODE)

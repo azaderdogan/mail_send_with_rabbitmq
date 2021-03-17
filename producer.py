@@ -11,9 +11,7 @@ import os
 url = os.environ.get("CLOUDAMQP_URL", "amqp://guest:guest@localhost:5672/")
 params = pika.URLParameters(url)
 connection = pika.BlockingConnection(params)
-
 consumer_queue = 'email'
-
 
 def create_producer_queue(connection: pika.BlockingConnection):
     channel = connection.channel()
@@ -40,12 +38,6 @@ def create_delay_queue(queue_name, ttl):
     return delay_channel
 
 
-mail = Mail(me="T3",
-            to="azad56azad56@gmail.com",
-            title="başlık",
-            content="içerik",
-            send_date_time=datetime(2023, 3, 17, 16, 40, 5),
-            create_date_time=datetime.today())
 
 
 def send_message(mail: Mail):
@@ -54,9 +46,8 @@ def send_message(mail: Mail):
     send_date_time = mail.send_date_time
     created_date_time = mail.create_date_time
     ttl = calculate_millisecond(created_date_time, send_date_time)
-    email = json.dumps(mail.__dict__, default=datetime_convertor)
     delay_channel = create_delay_queue(queue_name, ttl)
-    email = email.encode(encoding='utf-8').decode(encoding='utf-8')
+    email = json.dumps(mail.__dict__, default=datetime_convertor,ensure_ascii=False).encode('utf8').decode()
     delay_channel.basic_publish(exchange='',
                                 routing_key=f'{queue_name}',
                                 body=email,
@@ -67,24 +58,24 @@ def send_message(mail: Mail):
                                 ), )
 
 
-def fake_send_message(mail: Mail):
-    delay_channel = create_producer_queue(connection)
-    queue_name = f'{mail.send_date_time.today()}'
-    send_date_time = mail.send_date_time
-    created_date_time = mail.create_date_time
-    ttl = calculate_millisecond(created_date_time, send_date_time)
+# def fake_send_message(mail: Mail):
+#     delay_channel = create_producer_queue(connection)
+#     queue_name = f'{mail.send_date_time.today()}'
+#     send_date_time = mail.send_date_time
+#     created_date_time = mail.create_date_time
+#     ttl = calculate_millisecond(created_date_time, send_date_time)
+#
+#     email = json.dumps(mail.__dict__, default=datetime_convertor,ensure_ascii=False).encode('utf8').decode()
+#     pprint(email)
+#     delay_channel.basic_publish(exchange='',
+#                                 routing_key=f'{consumer_queue}',
+#                                 body=email,
+#                                 properties=pika.BasicProperties(
+#                                     content_encoding='utf-8',
+#                                     content_type='application/json',
+#                                     delivery_mode=2
+#                                 )
+#                                 )
 
-    email = json.dumps(mail.__dict__, default=datetime_convertor,ensure_ascii=False).encode('utf8').decode()
-    pprint(email)
-    delay_channel.basic_publish(exchange='',
-                                routing_key=f'{consumer_queue}',
-                                body=email,
-                                properties=pika.BasicProperties(
-                                    content_encoding='utf-8',
-                                    content_type='application/json',
-                                    delivery_mode=2
-                                )
-                                )
 
 
-fake_send_message(mail)
