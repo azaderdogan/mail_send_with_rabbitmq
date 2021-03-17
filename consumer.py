@@ -28,6 +28,10 @@ def send(mail):
     response = requests.post(url, json=data)
     if response.status_code == 200:
         print('başarılı')
+        print(response.json())
+    else:
+        print(response.status_code)
+        print(response.json())
 
 def consumer():
     def callback(ch, method, properties, body: bytes):
