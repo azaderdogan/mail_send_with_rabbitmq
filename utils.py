@@ -50,4 +50,4 @@ def dict_to_mail(data: dict):
     mail.send_date_time = data['send_date_time']
     mail.title = data['title']
     mail.to = data['to']
-    print(mail.__dict__)
+    return mail

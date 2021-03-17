@@ -40,8 +40,8 @@ def create_delay_queue(queue_name, ttl):
     return delay_channel
 
 
-mail = Mail(me="azad",
-            to="sema",
+mail = Mail(me="T3",
+            to="azad56azad56@gmail.com",
             title="başlık",
             content="içerik",
             send_date_time=datetime(2023, 3, 17, 16, 40, 5),

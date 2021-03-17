@@ -2,6 +2,8 @@ import json
 import os
 import sys
 from pprint import pprint
+
+from main import send
 from utils import dict_to_mail
 import pika
 
@@ -17,8 +19,8 @@ def consumer():
     def callback(ch, method, properties, body: bytes):
         body = body.decode().__str__()
         body = json.loads(body)
-
-        dict_to_mail(body)
+        mail = dict_to_mail(body)
+        send(mail)
 
     channel.basic_consume(queue='email', on_message_callback=callback, auto_ack=True, )
     channel.start_consuming()
@@ -34,4 +36,3 @@ if __name__ == '__main__':
             sys.exit(0)
         except SystemExit:
             os._exit(0)
-

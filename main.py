@@ -4,19 +4,21 @@ import smtplib
 import os
 
 
-url = 'http://www.setrowsend.com/email/send.php?k=bkNfnkD9P3pLdQgj85rLjQ4xAH6ZSJOUUsW7Ds6immUq30w2VQ&transcode=9a2034618ce854b1ff686231cf1269b1581e2ebb7984382bbc'
+def send(mail):
+    transcode = 'e3da6689630c9fc01fc4f809b8f7912b235fb45ee461bdc59e'
+    apikey = 'bkNfnkD9P3pLdQgj85rLjQ4xAH6ZSJOUUsW7Ds6immUq30w2VQ'
+    url = f'http://www.setrowsend.com/email/send.php?k={apikey}&transcode={transcode}'
 
-content = 'Email içeriği'
-# gmaili mail serverlarına bağlıyoruz
-mail = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    data = [{
+        "gonderen_adi": "Türkiye Teknoloji Takımı",
+        "musterigonderimid": "ID123Q",
+        "adres": f"{mail.to}",
+        "alanlar": {"content": f"{mail.content}", "subject": f"{mail.title}"},
+        "dosya_ek": []
+    }]
 
-data = [{
-    "gonderen_adi": "Şablon gönderen adı (from name) bilgisi",
-    "musterigonderimid": "ID123Q",
-    "adres": "email@domain.com",
-    "alanlar": {"content": "icerik_content", "subject": "icerik_subject"},
-    "dosya_ek": []
-}]
+    response = requests.post(url, json=data)
+    if response.status_code == 200:
+        print('başarılı')
 
-if __name__ == '__main__':
-    pass
+
